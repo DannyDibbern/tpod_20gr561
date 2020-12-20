@@ -1,0 +1,116 @@
+<?xml version ="1.0" ?>
+
+<robot name="tpod" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <link name="base_link">
+        <visual>
+            <origin rpy="1.570796 0.01 0" xyz="-0.9675 0.65 -0.28"/>
+            <geometry>
+                <mesh filename="package://tpod_parking/meshes/golfcar.dae"/>
+            </geometry>
+        </visual>
+        <collision name="collision">
+            <origin rpy="0 0 0" xyz="0.27 0 0.67"/>
+            <geometry>
+                <box size="2.48 1.30 1.90"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="front_lms1xx">
+        <visual>
+            <geometry>
+                <mesh filename="package://tpod_parking/meshes/LMS.dae"/>
+            </geometry>
+            <origin rpy="0 0 0" xyz="0.22 -0.05 0"/>
+        </visual>
+        <inertial>
+            <mass value="10"/>
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+        </inertial>
+    </link>
+
+    <link name="front_tim5xx">
+        <visual>
+            <geometry>
+                <mesh filename="package://tpod_parking/meshes/TIM.dae"/>
+            </geometry>
+            <origin rpy="1.570796 0.2094395 0" xyz="0 0 0"/>
+            <!--origin rpy="1.570796 0.2094395 0" xyz="-0.06 0 0.03"/-->
+        </visual>
+        <inertial>
+            <mass value="10"/>
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+        </inertial>
+    </link>
+
+    <link name="zed_camera_center">
+        <visual>
+            <geometry>
+                <mesh filename="package://tpod_parking/meshes/ZED.dae"/>
+            </geometry>
+            <origin rpy="1.3613565 0 -1.570796" xyz="0 0 0"/>
+        </visual>
+        <inertial>
+            <mass value="10"/>
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+        </inertial>
+    </link>
+
+    <link name="back_d455">
+        <visual>
+            <geometry>
+                <mesh filename="package://tpod_parking/meshes/D455.dae"/>
+            </geometry>
+            <origin rpy="1.3613565 0 -1.570796" xyz="0 0.2 0"/>
+            <!--origin rpy="1.3613565 0 -1.570796" xyz="0 0 0"/-->
+        </visual>
+        <inertial>
+            <mass value="10"/>
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+        </inertial>
+    </link>
+
+    <link name="back_tim5xx">
+        <visual>
+            <geometry>
+                <mesh filename="package://tpod_parking/meshes/TIM.dae"/>
+            </geometry>
+            <origin rpy="1.570796 0 0" xyz="0 0 0"/>
+        </visual>
+        <inertial>
+            <mass value="10"/>
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+        </inertial>
+    </link>
+
+   <joint name="base_lms" type="fixed">
+        <origin xyz="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="front_lms1xx"/>
+    </joint>
+
+    <joint name="base_fronttim" type="fixed">
+        <origin xyz="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="front_tim5xx"/>
+    </joint>
+
+    <joint name="base_zed" type="fixed">
+        <origin xyz="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="zed_camera_center"/>
+    </joint>
+
+    <joint name="base_to_d455" type="fixed">
+        <origin xyz="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="back_d455"/>
+    </joint>
+
+    <joint name="base_backtim" type="fixed">
+        <origin xyz="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="back_tim5xx"/>
+    </joint>
+
+</robot>

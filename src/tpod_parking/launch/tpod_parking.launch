@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <!-- Initiate tpod-ros connection -->
+  <node name="tpod_driver" pkg="tpod_driver" type="tpod_driver_node" output="screen"> 
+    <param name="tpod_ip" value="192.168.1.20:50000" type="str"/>
+    <param name="axis_linear" value="1" type="int"/>
+    <param name="axis_angular" value="0" type="int"/>
+  </node>
+
+  <!-- Publish tpod transforms -->
+	<node name="tf_broadcast" pkg="tpod_driver" type="tf_broadcast" output="screen"/>
+
+  <!-- Initiate tim511 and lms151 to ros connection -->
+  <include file="$(find tpod_parking)/launch/tpod_lidar.launch"/>
+
+  <!-- Merge laser scans -->
+  <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
+    <param name="destination_frame" value="/base_link"/>
+    <param name="cloud_destination_topic" value="/cloud_merge"/>
+    <param name="scan_destination_topic" value="/scan_merge"/>
+    <param name="laserscan_topics" value ="/scan_1 /scan_2"/>
+
+    <param name="angle_min" value="-3.14"/>
+    <param name="angle_max" value="3.14"/>
+    <param name="angle_increment" value="0.0058"/>
+    <param name="scan_time" value="0.0333333"/>
+    <param name="range_min" value="0.5"/>
+    <param name="range_max" value="20"/>
+  </node>
+
+  <!-- Publish tpod IMU data -->
+
+  <!-- Publish tpod GPS data -->
+
+  <!-- Publish tpod wheel odometry -->
+	<node name="odom" pkg="tpod_driver" type="odom"/>
+  <!--node name="golf_odom" pkg="tpod_driver" type="golf_odom"/-->
+
+  <!-- Publish tpod laser odometry -->
+  <node pkg="rf2o_laser_odometry" type="rf2o_laser_odometry_node" name="rf2o_laser_odometry">
+    <param name="laser_scan_topic" value="/scan_3"/>      
+    <param name="odom_topic" value="/odom_rf2o" />        
+    <param name="publish_tf" value="false" />                
+    <param name="base_frame_id" value="/base_link"/>           
+    <param name="odom_frame_id" value="/odom" />                 
+    <param name="init_pose_from_topic" value="" />              
+    <param name="freq" value="6.0"/>                            
+    <param name="verbose" value="true" />                       
+  </node>
+
+  <!-- Odometry fusion using robot_localization -->
+  
+
+  <!-- Inititate ZED camera to ros connection -->
+  <include file="$(find tpod_parking)/launch/tpod_zed.launch"/>
+
+  <!-- Initiate D455 camera to ros connection -->
+
+
+  <!-- Inititate SLAM -->   
+  <include file="$(find tpod_parking)/launch/kartoslam.launch"/>
+ 
+  <!-- Inititate teb local planner -->
+  <include file="$(find tpod_parking)/launch/tpod_teb.launch"/>
+
+  <!-- Initiate controller -->
+  <node name="control" pkg="tpod_driver" type="control"/>
+
+  <!-- Show in Rviz -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find tpod_parking)/urdf/tpod.xacro'"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find tpod_parking)/launch/tpod_parking.rviz"/>
+</launch>
